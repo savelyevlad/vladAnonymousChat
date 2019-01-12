@@ -1,0 +1,6 @@
+Hello!
+This is bot, that allows you to communicate anonymously with strangers.
+Currently it allows to exchange ONLY text messages.
+To use this bot you should know a few commands:
+/stop - stop current dialog or search
+/new - stop current dialog and look for a new interlocutor. If you are not in dialog, it stops search
