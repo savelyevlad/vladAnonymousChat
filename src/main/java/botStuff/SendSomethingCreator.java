@@ -34,7 +34,6 @@ class SendSomethingCreator {
             sendSticker(chatId, message.getSticker());
         }
         else if(message.hasPhoto()) {
-            // TODO: sendPhoto
             sendPhoto(chatId, message);
         }
         else if(message.getVoice() != null) {
@@ -76,7 +75,6 @@ class SendSomethingCreator {
     }
 
     private static void sendPhoto(long chatId, Message message) {
-        // TODO: sendPhoto
 
         int i = 0, maxWidth = 0, counter = 0;
 
