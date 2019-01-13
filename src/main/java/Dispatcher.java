@@ -1,5 +1,6 @@
 import botStuff.BotInitializer;
 import databaseStuff.DatabaseConnector;
+import justStuff.AdminThread;
 
 public class Dispatcher {
 
@@ -9,5 +10,7 @@ public class Dispatcher {
         new DatabaseConnector().connect();
         // creates and runs bot
         new BotInitializer().start();
+        // Console control
+        new Thread(new AdminThread()).start();
     }
 }

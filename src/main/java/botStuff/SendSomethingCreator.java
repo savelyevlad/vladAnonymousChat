@@ -1,8 +1,10 @@
 package botStuff;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
 import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -29,17 +31,32 @@ public class SendSomethingCreator {
             sendMessage(chatId, message.getText());
         }
         else if(message.hasSticker()) {
-            // TODO: send sticker
             sendSticker(chatId, message.getSticker());
         }
         else if(message.hasPhoto()) {
+            sendPhoto(chatId, message);
         }
+    }
+
+    private static void sendPhoto(long chatId, Message message) {
+        String filePath = "photos\\" + message.getPhoto().get(0).getFileId();
+        downloadFileViaFileId("photos", message.getPhoto().get(0).getFileId());
+        SendPhoto sendPhoto = new SendPhoto()
+                .setPhoto(new java.io.File(filePath))
+                .setCaption(message.getCaption())
+                .setChatId(chatId);
+        try {
+            bot.execute(sendPhoto);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        deleteFile(filePath);
     }
 
     private static void sendSticker(long chatId, Sticker sticker) {
         // TODO: send sticker
         String filePath = "stickers\\" + sticker.getFileId();
-        if(!fileExists(filePath)) {
+        if (!fileExists(filePath)) {
             downloadFileViaFileId("stickers", sticker.getFileId());
         }
         SendSticker sendSticker = new SendSticker()
@@ -49,6 +66,17 @@ public class SendSomethingCreator {
             bot.execute(sendSticker);
         } catch (TelegramApiException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void deleteFile(String filePath) {
+        java.io.File file = new java.io.File(filePath);
+        if(!file.delete()) {
+            try {
+                throw new IOException("Photo was not deleted");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

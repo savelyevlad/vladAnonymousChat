@@ -96,6 +96,9 @@ public class Bot extends TelegramLongPollingBot {
 
     // if there was "/new" command
     private synchronized void commandNew(Update update) {
+        if(connectedUsers.containsKey(update.getMessage().getFrom())) {
+            disconnectUser(update.getMessage().getFrom());
+        }
         if(searchingUser == null) {
             sendMessage(update.getMessage().getFrom(), "We are looking for an interlocutor. You can stop search using command \"/stop\"");
             searchingUser = update.getMessage().getFrom();
