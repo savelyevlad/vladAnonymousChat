@@ -17,8 +17,11 @@ public class Bot extends TelegramLongPollingBot {
     private HashMap<User, User> connectedUsers = new HashMap<>();
 
     Bot() {
+
         System.out.println("Bot was started!");
         SendSomethingCreator.setBot(this);
+
+        // TODO: addButtons
     }
 
     public synchronized void onUpdateReceived(Update update) {
