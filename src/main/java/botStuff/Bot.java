@@ -29,10 +29,10 @@ public class Bot extends TelegramLongPollingBot {
         // updates chatId for user in database
         if(update.hasMessage()) {
             UserAndChatId.insert(new Pair<>(update.getMessage().getFrom(), update.getMessage().getChatId()));
-        }
 
-        System.out.println("Message from " + update.getMessage().getFrom().getId() +
+            System.out.println("Message from " + update.getMessage().getFrom().getId() +
                     (update.getMessage().hasText() ? ": " + update.getMessage().getText() : ""));
+        }
 
         if(update.hasMessage()) {
             if(update.getMessage().hasText()) {

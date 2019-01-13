@@ -1,13 +1,13 @@
 package botStuff;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
+import org.telegram.telegrambots.meta.api.methods.send.*;
 import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
+import org.telegram.telegrambots.meta.api.objects.Voice;
+import org.telegram.telegrambots.meta.api.objects.games.Animation;
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -17,11 +17,11 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class SendSomethingCreator {
+class SendSomethingCreator {
 
     private static Bot bot;
 
-    public static void setBot(Bot bot) {
+    static void setBot(Bot bot) {
         SendSomethingCreator.bot = bot;
     }
 
@@ -34,13 +34,62 @@ public class SendSomethingCreator {
             sendSticker(chatId, message.getSticker());
         }
         else if(message.hasPhoto()) {
+            // TODO: sendPhoto
             sendPhoto(chatId, message);
+        }
+        else if(message.getVoice() != null) {
+            sendVoice(chatId, message.getVoice());
+        }
+        else if(message.hasAnimation()) {
+            // TODO: sendAnimation
+            sendAnimation(chatId, message.getAnimation());
         }
     }
 
+    private static void sendAnimation(long chatId, Animation animation) {
+        // TODO: sendAnimation
+        String filePath = "animations\\" + animation.getFileId();
+        downloadFileViaFileId("animations", animation.getFileId());
+        SendAnimation sendAnimation = new SendAnimation()
+                .setAnimation(new java.io.File(filePath))
+                .setChatId(chatId);
+        try {
+            bot.execute(sendAnimation);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        deleteFile(filePath);
+    }
+
+    private static void sendVoice(long chatId, Voice voice) {
+        String filePath = "voices\\" + voice.getFileId();
+        downloadFileViaFileId("voices", voice.getFileId());
+        SendVoice sendVoice = new SendVoice()
+                .setVoice(new java.io.File(filePath))
+                .setChatId(chatId);
+        try {
+            bot.execute(sendVoice);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        deleteFile(filePath);
+    }
+
     private static void sendPhoto(long chatId, Message message) {
-        String filePath = "photos\\" + message.getPhoto().get(0).getFileId();
-        downloadFileViaFileId("photos", message.getPhoto().get(0).getFileId());
+        // TODO: sendPhoto
+
+        int i = 0, maxWidth = 0, counter = 0;
+
+        for(PhotoSize photoSize : message.getPhoto()) {
+            if(photoSize.getWidth() > maxWidth) {
+                maxWidth = photoSize.getWidth();
+                i = counter;
+            }
+            ++counter;
+        }
+
+        String filePath = "photos\\" + message.getPhoto().get(i).getFileId();
+        downloadFileViaFileId("photos", message.getPhoto().get(i).getFileId());
         SendPhoto sendPhoto = new SendPhoto()
                 .setPhoto(new java.io.File(filePath))
                 .setCaption(message.getCaption())
@@ -73,7 +122,7 @@ public class SendSomethingCreator {
         java.io.File file = new java.io.File(filePath);
         if(!file.delete()) {
             try {
-                throw new IOException("Photo was not deleted");
+                throw new IOException("Не удалось удалить файл");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -108,6 +157,7 @@ public class SendSomethingCreator {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(folder + "\\" + fileName);
             fileOutputStream.write(output);
+            fileOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
