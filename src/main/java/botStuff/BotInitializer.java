@@ -6,15 +6,22 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 public class BotInitializer {
 
+    private Bot bot;
+
     public void start() {
 
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
 
         try {
-            botsApi.registerBot(new Bot());
+            bot = new Bot();
+            botsApi.registerBot(bot);
         } catch (TelegramApiRequestException e) {
             e.printStackTrace();
         }
+    }
+
+    public Bot getBot() {
+        return bot;
     }
 }

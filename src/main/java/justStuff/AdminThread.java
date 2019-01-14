@@ -1,5 +1,6 @@
 package justStuff;
 
+import botStuff.Bot;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -9,6 +10,11 @@ import java.util.Scanner;
 public class AdminThread implements Runnable {
 
     private final Scanner scanner = new Scanner(System.in);
+    private final Bot bot;
+
+    public AdminThread(Bot bot) {
+        this.bot = bot;
+    }
 
     @Override
     public void run() {
@@ -19,6 +25,16 @@ public class AdminThread implements Runnable {
 
         if(line.equals("/delete stickers")) {
             deleteStickers();
+        }
+        else if(line.substring(0, 6).equals("/adsimg")) {
+            // TODO: ads
+        }
+        else if(line.substring(0, 3).equals("/ads")) {
+            // TODO: ads
+        }
+        else if(line.substring(0, 4).equals("/send")) {
+            // TODO: this shit
+            bot.sendAll(line.substring(5, line.length() - 1));
         }
     }
 

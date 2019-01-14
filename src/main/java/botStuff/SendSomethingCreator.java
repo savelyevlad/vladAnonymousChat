@@ -26,7 +26,6 @@ class SendSomethingCreator {
     }
 
     static void messageToSendSomething(Message message, long chatId) {
-        System.out.println(message.hasSticker());
         if(message.hasText()) {
             sendMessage(chatId, message.getText());
         }

@@ -9,8 +9,9 @@ public class Dispatcher {
         // connects to mysql database
         new DatabaseConnector().connect();
         // creates and runs bot
-        new BotInitializer().start();
+        BotInitializer botInitializer = new BotInitializer();
+        botInitializer.start();
         // Console control
-        new Thread(new AdminThread()).start();
+        new Thread(new AdminThread(botInitializer.getBot())).start();
     }
 }

@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class Bot extends TelegramLongPollingBot {
 
@@ -22,6 +23,10 @@ public class Bot extends TelegramLongPollingBot {
         SendSomethingCreator.setBot(this);
 
         // TODO: addButtons
+    }
+
+    public void sendAll(String messageText) {
+        connectedUsers.forEach((user, user2) -> sendMessage(user, messageText));
     }
 
     public synchronized void onUpdateReceived(Update update) {
