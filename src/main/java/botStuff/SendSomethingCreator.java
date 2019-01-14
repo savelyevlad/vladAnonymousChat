@@ -40,19 +40,38 @@ class SendSomethingCreator {
         }
         else if(message.hasAnimation()) {
             // TODO: sendAnimation
-            sendAnimation(chatId, message.getAnimation());
+            sendAnimation(chatId, message);
+        }
+        else if(message.hasDocument()) {
+            sendDocument(chatId, message);
         }
     }
 
-    private static void sendAnimation(long chatId, Animation animation) {
+    private static void sendAnimation(long chatId, Message message) {
         // TODO: sendAnimation
-        String filePath = "animations\\" + animation.getFileId();
-        downloadFileViaFileId("animations", animation.getFileId());
+        String filePath = "animations\\" + message.getAnimation().getFileId();
+        downloadFileViaFileId("animations", message.getAnimation().getFileId());
         SendAnimation sendAnimation = new SendAnimation()
                 .setAnimation(new java.io.File(filePath))
-                .setChatId(chatId);
+                .setChatId(chatId)
+                .setCaption(message.getCaption());
         try {
             bot.execute(sendAnimation);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        deleteFile(filePath);
+    }
+
+    private static void sendDocument(long chatId, Message message) {
+        String filePath = "docs\\" + message.getDocument().getFileName();
+        downloadFileViaFileId("docs", message.getDocument().getFileId(), message.getDocument().getFileName());
+        SendDocument sendDocument = new SendDocument()
+                .setDocument(new java.io.File(filePath))
+                .setCaption(message.getCaption())
+                .setChatId(chatId);
+        try {
+            bot.execute(sendDocument);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -131,7 +150,7 @@ class SendSomethingCreator {
         return file.exists();
     }
 
-    private static void downloadFileViaFileId(String folder, String fileId) {
+    private static void downloadFileViaFileId(String folder, String fileId, String fileName) {
         GetFile getFile = new GetFile().setFileId(fileId);
         byte[] output = null;
         try {
@@ -147,7 +166,11 @@ class SendSomethingCreator {
         } catch (TelegramApiException | IOException e) {
             e.printStackTrace();
         }
-        writeBytesToFile(folder, fileId, output);
+        writeBytesToFile(folder, fileName, output);
+    }
+
+    private static void downloadFileViaFileId(String folder, String fileId) {
+        downloadFileViaFileId(folder, fileId, fileId);
     }
 
     private static void writeBytesToFile(String folder, String fileName, byte[] output) {
