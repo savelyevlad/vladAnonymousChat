@@ -45,6 +45,9 @@ class SendSomethingCreator {
         else if(message.hasDocument()) {
             sendDocument(chatId, message);
         }
+        else if(message.getAudio() != null) {
+            sendAudio(chatId, message);
+        }
     }
 
     private static void sendAnimation(long chatId, Message message) {
@@ -63,15 +66,15 @@ class SendSomethingCreator {
         deleteFile(filePath);
     }
 
-    private static void sendDocument(long chatId, Message message) {
-        String filePath = "docs\\" + message.getDocument().getFileName();
-        downloadFileViaFileId("docs", message.getDocument().getFileId(), message.getDocument().getFileName());
-        SendDocument sendDocument = new SendDocument()
-                .setDocument(new java.io.File(filePath))
+    private static void sendAudio(long chatId, Message message) {
+        String filePath = "audio\\" + message.getAudio().getFileId();
+        downloadFileViaFileId("audio", message.getAudio().getFileId());
+        SendAudio sendAudio = new SendAudio()
+                .setAudio(new java.io.File(filePath))
                 .setCaption(message.getCaption())
                 .setChatId(chatId);
         try {
-            bot.execute(sendDocument);
+            bot.execute(sendAudio);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -132,6 +135,21 @@ class SendSomethingCreator {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void sendDocument(long chatId, Message message) {
+        String filePath = "docs\\" + message.getDocument().getFileName();
+        downloadFileViaFileId("docs", message.getDocument().getFileId(), message.getDocument().getFileName());
+        SendDocument sendDocument = new SendDocument()
+                .setDocument(new java.io.File(filePath))
+                .setCaption(message.getCaption())
+                .setChatId(chatId);
+        try {
+            bot.execute(sendDocument);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        deleteFile(filePath);
     }
 
     private static void deleteFile(String filePath) {
