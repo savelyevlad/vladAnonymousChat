@@ -49,10 +49,13 @@ class SendSomethingCreator {
 
     private static void sendAnimation(long chatId, Message message) {
         // TODO: sendAnimation
+        // getting file path to a sticker which i'm tryna send
         String filePath = "animations\\" + message.getAnimation().getFileId();
+        // downloading that sticker by its id
         downloadFileViaFileId("animations", message.getAnimation().getFileId());
         SendAnimation sendAnimation = null;
         try {
+            // creating SendAnimation instance to send it
             sendAnimation = new SendAnimation()
                     .setAnimation(message.getAnimation().getFileId(), new FileInputStream(new java.io.File(filePath)))
                     .setChatId(chatId);
@@ -60,6 +63,7 @@ class SendSomethingCreator {
             e.printStackTrace();
         }
         try {
+            // sending animation (this line doesn't work)
             bot.execute(sendAnimation);
         } catch (TelegramApiException e) {
             e.printStackTrace();
