@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 
 public class Bot extends TelegramLongPollingBot {
 
@@ -123,7 +122,7 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     private void sendMessage(User user, String messageText) {
-        System.out.println(UserAndChatId.getChatId(user));
+//        System.out.println(UserAndChatId.getChatId(user));
         sendMessage(UserAndChatId.getChatId(user), messageText);
     }
 

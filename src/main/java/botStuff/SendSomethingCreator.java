@@ -7,13 +7,10 @@ import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Voice;
-import org.telegram.telegrambots.meta.api.objects.games.Animation;
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -54,16 +51,20 @@ class SendSomethingCreator {
         // TODO: sendAnimation
         String filePath = "animations\\" + message.getAnimation().getFileId();
         downloadFileViaFileId("animations", message.getAnimation().getFileId());
-        SendAnimation sendAnimation = new SendAnimation()
-                .setAnimation(new java.io.File(filePath))
-                .setChatId(chatId)
-                .setCaption(message.getCaption());
+        SendAnimation sendAnimation = null;
+        try {
+            sendAnimation = new SendAnimation()
+                    .setAnimation(message.getAnimation().getFileId(), new FileInputStream(new java.io.File(filePath)))
+                    .setChatId(chatId);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         try {
             bot.execute(sendAnimation);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        deleteFile(filePath);
+//        deleteFile(filePath);
     }
 
     private static void sendAudio(long chatId, Message message) {
@@ -122,7 +123,6 @@ class SendSomethingCreator {
     }
 
     private static void sendSticker(long chatId, Sticker sticker) {
-        // TODO: send sticker
         String filePath = "stickers\\" + sticker.getFileId();
         if (!fileExists(filePath)) {
             downloadFileViaFileId("stickers", sticker.getFileId());
